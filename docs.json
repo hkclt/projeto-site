@@ -1,0 +1,37 @@
+{
+  "title": "API Documentation",
+  "pages": [
+    {
+      "title": "Introduction",
+      "content": "# Introduction\n\nWelcome to the API documentation. This guide provides everything you need to integrate with our platform.\n\n## Getting Started\n\nTo begin using the API, you'll need to create an account and obtain your API key. All requests must be authenticated using a Bearer token in the Authorization header.\n\n```\nAuthorization: Bearer your-api-key-here\n```\n\n## Base URL\n\nAll API endpoints are relative to the following base URL:\n\n```\nhttps://api.example.com/v1\n```\n\n## Content Type\n\nAll requests and responses use JSON format. Ensure you set the `Content-Type` header to `application/json`."
+    },
+    {
+      "title": "Authentication",
+      "content": "# Authentication\n\nOur API uses API keys for authentication. You can manage your API keys from the dashboard.\n\n## How to Authenticate\n\nInclude your API key in the `Authorization` header as a Bearer token:\n\n```http\nGET /v1/users\nAuthorization: Bearer sk_live_abc123def456\n```\n\n## API Key Types\n\n| Type | Description |\n|------|-------------|\n| `sk_live_*` | Production API keys |\n| `sk_test_*` | Test API keys |\n\n## Rate Limiting\n\nAPI requests are rate-limited to 100 requests per minute per key. If you exceed this limit, you'll receive a `429 Too Many Requests` response."
+    },
+    {
+      "title": "Users",
+      "content": "# Users\n\nThe Users API allows you to manage user accounts in your application.\n\n## List Users\n\n```http\nGET /users\n```\n\nReturns a paginated list of users.\n\n### Parameters\n\n| Parameter | Type   | Description |\n|-----------|--------|-------------|\n| `page`    | number | Page number |\n| `limit`   | number | Items per page |\n\n### Response\n\n```json\n{\n  \"data\": [\n    {\n      \"id\": \"usr_123\",\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\"\n    }\n  ],\n  \"total\": 42,\n  \"page\": 1\n}\n```\n\n## Create User\n\n```http\nPOST /users\n```\n\n### Request Body\n\n```json\n{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"securepassword\"\n}\n```"
+    },
+    {
+      "title": "Products",
+      "content": "# Products\n\nManage your product catalog through the Products API.\n\n## List Products\n\n```http\nGET /products\n```\n\nReturns all products with optional filtering.\n\n### Query Parameters\n\n| Parameter | Type   | Description |\n|-----------|--------|-------------|\n| `category` | string | Filter by category |\n| `search`  | string | Search by name |\n\n## Create Product\n\n```http\nPOST /products\n```\n\n### Request Body\n\n```json\n{\n  \"name\": \"Premium Plan\",\n  \"price\": 29.99,\n  \"description\": \"Our best-selling plan\",\n  \"category\": \"subscription\"\n}\n```\n\n## Update Product\n\n```http\nPUT /products/:id\n```\n\nPartially update a product's information."
+    },
+    {
+      "title": "Orders",
+      "content": "# Orders\n\nThe Orders API handles order processing and management.\n\n## Create Order\n\n```http\nPOST /orders\n```\n\n### Request Body\n\n```json\n{\n  \"user_id\": \"usr_123\",\n  \"items\": [\n    {\n      \"product_id\": \"prod_456\",\n      \"quantity\": 2\n    }\n  ],\n  \"shipping_address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"zip\": \"94105\"\n  }\n}\n```\n\n## List Orders\n\n```http\nGET /orders\n```\n\nReturns all orders for the authenticated user.\n\n## Get Order\n\n```http\nGET /orders/:id\n```\n\nReturns detailed information about a specific order, including line items and status."
+    },
+    {
+      "title": "Error Handling",
+      "content": "# Error Handling\n\nOur API returns consistent error responses to help you debug issues quickly.\n\n## Error Format\n\n```json\n{\n  \"error\": {\n    \"code\": \"invalid_request\",\n    \"message\": \"The request was invalid\",\n    \"details\": {\n      \"field\": \"email\",\n      \"reason\": \"Invalid email format\"\n    }\n  }\n}\n```\n\n## HTTP Status Codes\n\n| Code | Description |\n|------|-------------|\n| `200` | Success |\n| `201` | Created |\n| `400` | Bad Request |\n| `401` | Unauthorized |\n| `404` | Not Found |\n| `429` | Rate Limited |\n| `500` | Internal Server Error |\n\n## Common Errors\n\n- **invalid_request**: The request body is malformed or missing required fields.\n- **unauthorized**: The API key is missing or invalid.\n- **not_found**: The requested resource does not exist.\n- **rate_limited**: You've exceeded the rate limit."
+    },
+    {
+      "title": "Webhooks",
+      "content": "# Webhooks\n\nWebhooks allow you to receive real-time notifications about events in your account.\n\n## Setup\n\nConfigure your webhook endpoint URL in the dashboard. We'll send POST requests to your endpoint when events occur.\n\n## Event Types\n\n| Event | Description |\n|-------|-------------|\n| `order.created` | A new order was placed |\n| `order.updated` | An order status changed |\n| `payment.succeeded` | A payment was successful |\n| `payment.failed` | A payment failed |\n| `user.created` | A new user registered |\n\n## Signature Verification\n\nEach webhook request includes a signature header that you should verify:\n\n```\nX-Webhook-Signature: t=1234567890,s=abc123def456\n```\n\nVerify the signature using your webhook secret to ensure the request is legitimate.\n\n## Retry Policy\n\nIf your endpoint returns a non-2xx response, we'll retry up to 5 times with exponential backoff."
+    },
+    {
+      "title": "SDKs & Libraries",
+      "content": "# SDKs & Libraries\n\nWe provide official SDKs for popular programming languages.\n\n## JavaScript / TypeScript\n\n```bash\nnpm install @example/api-client\n```\n\n```javascript\nimport ExampleAPI from '@example/api-client';\n\nconst client = new ExampleAPI('sk_live_abc123');\nconst users = await client.users.list();\n```\n\n## Python\n\n```bash\npip install example-api\n```\n\n```python\nfrom example_api import Client\n\nclient = Client('sk_live_abc123')\nusers = client.users.list()\n```\n\n## Go\n\n```bash\ngo get github.com/example/api-go\n```\n\n```go\nimport \"github.com/example/api-go\"\n\nclient := api.NewClient(\"sk_live_abc123\")\nusers, err := client.Users.List()\n```\n\n## 🚧 Community SDKs\n\nCommunity-maintained SDKs are available for Ruby, PHP, Java, and .NET. These are not officially supported by our team."
+    }
+  ]
+}
